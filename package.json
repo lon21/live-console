@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "start-dev": "nodemon ."
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "ws": "^8.8.1"
+  },
+  "repository": "https://github.com/lon21/live-console",
+  "name": "ws-console-tsying",
+  "version": "1.0.0",
+  "main": "index.mjs",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "author": {
+    "email": "lon21@lon21.pl",
+    "name": "lon21",
+    "url": "https://lon21.pl"
+  },
+  "license": "UNLICENSED"
+}
