@@ -4,43 +4,67 @@
 }
 
 body {
-    background-color: #000032;
+    background-color: #00001a;
+    font-family: consolas;
 }
 
 #main {
-	border-top-left-radius: 15px;
-	border-top-right-radius: 15px;
-	border: 5px white solid;
-	margin-top: 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border: 3px rgb(141, 141, 141) solid;
+    margin-top: 20px;
+    padding-top: 10px;
     width: 95%;
     margin-left: auto;
     margin-right: auto;
     height: 90vh;
+	background-color: black;
 }
 
 #output {
-	color: green;
-	padding-left: 10px;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
+    color: rgb(0, 188, 0);
+    padding-left: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
     background-color: black;
     height: 94%;
+    overflow: auto;
+}
+
+#output::-webkit-scrollbar {
+    width: 0.8vw;
+}
+
+#output::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+#output::-webkit-scrollbar-thumb {
+    background-color: white;
+	border-radius: 5%;
 }
 
 #inputBox {
+    width: 100%;
     display: flex;
     height: 6%;
-	border: white 1px solid;
+    border: rgb(141, 141, 141) 1px solid;
+    border-top: none;
 }
 
-#inputBox textarea {
+#inputBox input {
     width: 95%;
-	border: none;
-	resize: none;
+    border: none;
+    resize: none;
+    background-color: rgb(194, 194, 194);
+    padding: 5px;
+    font-size: 3vh;
 }
 
 #inputBox button {
     width: 5%;
-	border: none;
+    border: none;
+    border-left: 1px black dotted;
+    background-color: rgb(194, 194, 194);
 }
 

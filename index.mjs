@@ -1,20 +1,24 @@
 import express from 'express';
 import { WebSocketServer } from 'ws';
-import { spawn } from 'child_process';
+import { spawnSync } from 'child_process';
+import { appendFileSync, readFileSync, writeFileSync } from 'fs';
 
 const app = express();
 const port = 3000;
 
 (async () => {
+	await writeFileSync('./console.log', '');
+	await appendFileSync('./console.log', `[${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}] Console starting...\n`);
+
 	let ls;
 	switch (process.platform) {
 		case 'win32': {
-			ls = spawn('cmd');
+			ls = await spawnSync('cmd');
 			break;
 		}
 
 		case 'linux': {
-			ls = spawn('bash');
+			ls = await spawnSync('bash');
 			break;
 		}
 
@@ -22,6 +26,8 @@ const port = 3000;
 			throw new Error('Your system is not supported');
 		}
 	}
+
+	await appendFileSync('./console.log', `[${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}] Console started!\n`)
 
 	const ws = new WebSocketServer({ port: 3001 });
 
@@ -31,8 +37,11 @@ const port = 3000;
 		res.sendFile('./index.html', { root: '.' });
 	});
 
-	ws.on('connection', (client) => {
+	ws.on('connection', async (client) => {
 		console.log('connected')
+		await readFileSync('./console.log', 'utf-8').split(/\r?\n/).forEach(line => {
+			client.send(JSON.stringify({ type: 'consoleOutput', data: line+'</br>' }));
+		});
 		client.onmessage = (msg) => {
 			console.log(msg.data);
 		}
