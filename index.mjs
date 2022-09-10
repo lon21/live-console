@@ -40,7 +40,7 @@ const port = 3000;
 	ws.on('connection', async (client) => {
 		console.log('connected')
 		await readFileSync('./console.log', 'utf-8').split(/\r?\n/).forEach(line => {
-			client.send(JSON.stringify({ type: 'consoleOutput', data: line+'</br>' }));
+			client.send(JSON.stringify({ type: 'consoleOutput', data: line}));
 		});
 		client.onmessage = (msg) => {
 			console.log(msg.data);
