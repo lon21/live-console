@@ -1,7 +1,7 @@
 import express from 'express';
 import { WebSocketServer } from 'ws';
-import { spawnSync } from 'child_process';
 import { appendFileSync, readFileSync, writeFileSync } from 'fs';
+import { spawn } from 'node-pty';
 
 const app = express();
 const port = 3000;
@@ -10,15 +10,15 @@ const port = 3000;
 	await writeFileSync('./console.log', '');
 	await appendFileSync('./console.log', `[${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}] Console starting...\n`);
 
-	let ls;
+	let consoleApp;
 	switch (process.platform) {
 		case 'win32': {
-			ls = await spawnSync('cmd');
+			consoleApp = 'cmd.exe';
 			break;
 		}
 
 		case 'linux': {
-			ls = await spawnSync('bash');
+			consoleApp = 'bash';
 			break;
 		}
 
@@ -27,11 +27,32 @@ const port = 3000;
 		}
 	}
 
+	const vTerminal = spawn(consoleApp, [], {
+		name: 'live-console',
+	});
+
+	const clearData = (data) => {
+		let clearData = '';
+		for (let i = 0; i < data.length; i++) {
+			if (data.charCodeAt(i) <= 127) {
+				clearData += data.charAt(i);
+			}
+		}
+		return clearData;
+	}
+
+	const vTonData = async (data) => {
+		await appendFileSync('./console.log', data + '\n', { encoding: 'utf-8' });
+	}
+
+	vTerminal.onData(d => clearData(vTonData(d)));
+
 	await appendFileSync('./console.log', `[${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}] Console started!\n`)
 
 	const ws = new WebSocketServer({ port: 3001 });
 
 	app.use('/public', express.static('public'));
+
 
 	app.get('/', (req, res) => {
 		res.sendFile('./index.html', { root: '.' });
@@ -40,7 +61,7 @@ const port = 3000;
 	ws.on('connection', async (client) => {
 		console.log('connected')
 		await readFileSync('./console.log', 'utf-8').split(/\r?\n/).forEach(line => {
-			client.send(JSON.stringify({ type: 'consoleOutput', data: line}));
+			client.send(JSON.stringify({ type: 'consoleOutput', data: line }));
 		});
 		client.onmessage = (msg) => {
 			console.log(msg.data);
